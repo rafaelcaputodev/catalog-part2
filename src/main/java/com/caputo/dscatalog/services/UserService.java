@@ -4,6 +4,7 @@ import com.caputo.dscatalog.Repositories.RoleRepository;
 import com.caputo.dscatalog.Repositories.UserRepository;
 import com.caputo.dscatalog.dto.RoleDTO;
 import com.caputo.dscatalog.dto.UserDTO;
+import com.caputo.dscatalog.dto.UserInsertDTO;
 import com.caputo.dscatalog.entities.Role;
 import com.caputo.dscatalog.entities.User;
 import com.caputo.dscatalog.services.exceptions.DatabaseException;
@@ -13,6 +14,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +22,9 @@ import javax.persistence.EntityNotFoundException;
 
 @Service
 public class UserService {
+
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
     private UserRepository userRep;
@@ -40,9 +45,10 @@ public class UserService {
     }
 
     @Transactional
-    public UserDTO insert(UserDTO dto){
+    public UserDTO insert(UserInsertDTO dto){
         User entity = new User();
         copyDtoToEntity(dto, entity);
+        entity.setPassword(passwordEncoder.encode(dto.getPassword()));
         entity = userRep.save(entity);
         return new UserDTO(entity);
     }
