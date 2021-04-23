@@ -3,6 +3,11 @@ package com.caputo.dscatalog.dto;
 
 import com.caputo.dscatalog.entities.Category;
 import com.caputo.dscatalog.entities.Product;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.PastOrPresent;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,10 +17,19 @@ public class ProductDTO {
     public static final Long serialVersionUID = 1L;
 
     private Long id;
+
+    @Size(min = 5, max = 60, message = "Deve ter entre 5 e 60 caracteres!")
+    @NotBlank(message = "Campo requerido!")
     private String name;
+
+    @NotBlank(message = "Campo requerido!")
     private String description;
+
+    @Positive(message = "Valor deve ser superior a 0!")
     private Double price;
     private String imgUrl;
+
+    @PastOrPresent(message = "Data não pode ser futura!")
     private Instant date;
     List<CategoryDTO> categories = new ArrayList<>();
 

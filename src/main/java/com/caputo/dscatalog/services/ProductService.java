@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -42,10 +43,10 @@ public class ProductService {
 
 	@Transactional
     public ProductDTO insert(ProductDTO dto) {
-		Product entity = new Product();
-		copyDtoToEntity(dto, entity);
-		entity = productRep.save(entity);
-		return new ProductDTO(entity);
+			Product entity = new Product();
+			copyDtoToEntity(dto, entity);
+			entity = productRep.save(entity);
+			return new ProductDTO(entity);
     }
 
 	@Transactional
