@@ -5,6 +5,7 @@ import com.caputo.dscatalog.Repositories.UserRepository;
 import com.caputo.dscatalog.dto.RoleDTO;
 import com.caputo.dscatalog.dto.UserDTO;
 import com.caputo.dscatalog.dto.UserInsertDTO;
+import com.caputo.dscatalog.dto.UserUpdateDTO;
 import com.caputo.dscatalog.entities.Role;
 import com.caputo.dscatalog.entities.User;
 import com.caputo.dscatalog.services.exceptions.DatabaseException;
@@ -54,7 +55,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserDTO update(Long id, UserDTO dto){
+    public UserDTO update(Long id, UserUpdateDTO dto){
         try {
             User entity = userRep.getOne(id);
             copyDtoToEntity(dto, entity);
