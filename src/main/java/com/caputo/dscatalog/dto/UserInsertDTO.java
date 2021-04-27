@@ -1,5 +1,8 @@
 package com.caputo.dscatalog.dto;
 
+import com.caputo.dscatalog.services.validations.UserInsertValid;
+
+@UserInsertValid
 public class UserInsertDTO extends UserDTO{
     public static final long serialVersionUID = 1L;
 
