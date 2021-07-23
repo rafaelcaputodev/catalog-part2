@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query("SELECT DISTINCT obj FROM Product obj INNER JOIN obj.categories cats WHERE " +
-            "(:category IS NULL OR :category IN cats)")
-    Page<Product> find(Category category, Pageable pageable);
+            "(:category IS NULL OR :category IN cats) AND " +
+            "(LOWER(obj.name) LIKE LOWER(CONCAT('%',:name,'%')) )")
+    Page<Product> find(Category category, String name, Pageable pageable);
 }
