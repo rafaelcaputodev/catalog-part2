@@ -25,21 +25,22 @@ import java.util.List;
 public class ProductService {
 
 	@Autowired
-	private ProductRepository productRep;
+	private ProductRepository productRepository;
 
 	@Autowired
-	private CategoryRepository categoryRep;
+	private CategoryRepository categoryRepository;
 	
 	@Transactional(readOnly = true)
 	public Page<ProductDTO> findAllPaged(Long categoryId, String name, PageRequest pageRequest) {
-		List<Category> categories = (categoryId == 0) ? null : Arrays.asList(categoryRep.getOne(categoryId));
-		Page<Product> list = productRep.find(categories,name, pageRequest);
-		return list.map(x -> new ProductDTO(x));
+		List<Category> categories = (categoryId == 0) ? null : Arrays.asList(categoryRepository.getOne(categoryId));
+		Page<Product> page = productRepository.find(categories, name, pageRequest);
+		productRepository.findProductsWithCategories(page.getContent());
+		return page.map(x -> new ProductDTO(x, x.getCategories()));
 	}
 	
 	@Transactional(readOnly = true)
 	public ProductDTO findById(Long id) {
-		Product entity = productRep.findById(id).orElseThrow(() -> new ResourceNotFoundException("Entity not found"));
+		Product entity = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Entity not found"));
 		return new ProductDTO(entity, entity.getCategories());
 	}
 
@@ -47,16 +48,16 @@ public class ProductService {
     public ProductDTO insert(ProductDTO dto) {
 			Product entity = new Product();
 			copyDtoToEntity(dto, entity);
-			entity = productRep.save(entity);
+			entity = productRepository.save(entity);
 			return new ProductDTO(entity);
     }
 
 	@Transactional
     public ProductDTO update(Long id, ProductDTO dto) {
 		try {
-			Product entity = productRep.getOne(id);
+			Product entity = productRepository.getOne(id);
 			copyDtoToEntity(dto, entity);
-			entity = productRep.save(entity);
+			entity = productRepository.save(entity);
 			return new ProductDTO(entity);
 		}
 		catch (EntityNotFoundException e) {
@@ -66,7 +67,7 @@ public class ProductService {
 
     public void delete(Long id) {
 		try {
-			productRep.deleteById(id);
+			productRepository.deleteById(id);
 		}
 		catch (EmptyResultDataAccessException e){
 			throw new ResourceNotFoundException("Id not found " + id);
@@ -85,7 +86,7 @@ public class ProductService {
 
 		entity.getCategories().clear();
 		for (CategoryDTO cat : dto.getCategories()){
-			Category category = categoryRep.getOne(cat.getId());
+			Category category = categoryRepository.getOne(cat.getId());
 			entity.getCategories().add(category);
 		}
 	}
